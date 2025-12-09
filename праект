@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        .search-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .book-list, .reader-list {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        .book-list th, .reader-list th, .book-list td, .reader-list td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .book-list th, .reader-list th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Library Management System</h1>
+
+    <div class="container">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search for books..." oninput="searchBooks()">
+        </div>
+
+        <!-- Books Table -->
+        <table class="book-list" id="book-list">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Available</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Book items will go here -->
+            </tbody>
+        </table>
+
+        <!-- Reader Table -->
+        <table class="reader-list" id="reader-list">
+            <thead>
+                <tr>
+                    <th>Reader Name</th>
+                    <th>Book Borrowed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Reader items will go here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sample book data
+        const books = [
+            { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", available: true },
+            { id: 2, title: "1984", author: "George Orwell", available: true },
+            { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", available: false },
+            { id: 4, title: "Moby Dick", author: "Herman Melville", available: true }
+        ];
+
+        // Sample readers data
+        const readers = [
+            { name: "John Doe", bookBorrowed: "1984" },
+            { name: "Jane Smith", bookBorrowed: "" }
+        ];
+
+        // Function to render the books list
+        function renderBooks() {
+            const bookList = document.getElementById("book-list").getElementsByTagName("tbody")[0];
+            bookList.innerHTML = ""; // Clear current list
+
+            books.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.available ? "Yes" : "No"}</td>
+                    <td><button class="btn" ${book.available ? 'onclick="borrowBook(' + book.id + ')"' : 'disabled'}>Borrow</button></td>
+                `;
+                bookList.appendChild(row);
+            });
+        }
+
+        // Function to render the reader list
+        function renderReaders() {
+            const readerList = document.getElementById("reader-list").getElementsByTagName("tbody")[0];
+            readerList.innerHTML = ""; // Clear current list
+
+            readers.forEach(reader => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${reader.name}</td>
+                    <td>${reader.bookBorrowed}</td>
+                `;
+                readerList.appendChild(row);
+            });
+        }
+
+        // Borrow a book function
+        function borrowBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (book && book.available) {
+                book.available = false;
+                // Add book to a reader (for simplicity, assign to the first reader)
+                readers[1].bookBorrowed = book.title;
+                renderBooks();
+                renderReaders();
+            }
+        }
+
+        // Search function for books
+        function searchBooks() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const filteredBooks = books.filter(book => 
+                book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
+            );
+            
+            const bookList = document.getElementById("book-list").getElementsByTagName("tbody")[0];
+            bookList.innerHTML = ""; // Clear current list
+
+            filteredBooks.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.available ? "Yes" : "No"}</td>
+                    <td><button class="btn" ${book.available ? 'onclick="borrowBook(' + book.id + ')"' : 'disabled'}>Borrow</button></td>
+                `;
+                bookList.appendChild(row);
+            });
+        }
+
+        // Initial render
+        renderBooks();
+        renderReaders();
+    </script>
+
+</body>
+</html>
